@@ -1,0 +1,8 @@
+﻿  CLIENT.cpp
+C:\Users\bombr\Desktop\SP_LABS\SP_LAB_5\SP_LAB_5\CLIENT\CLIENT.cpp(115,13): warning C4477: 'printf' : format string '%s' requires an argument of type 'char *', but variadic argument 1 has type 'TCHAR *'
+C:\Users\bombr\Desktop\SP_LABS\SP_LAB_5\SP_LAB_5\CLIENT\CLIENT.cpp(115,13): message : consider using '%ls' in the format string
+C:\Users\bombr\Desktop\SP_LABS\SP_LAB_5\SP_LAB_5\CLIENT\CLIENT.cpp(115,13): message : consider using '%lls' in the format string
+C:\Users\bombr\Desktop\SP_LABS\SP_LAB_5\SP_LAB_5\CLIENT\CLIENT.cpp(115,13): message : consider using '%Ls' in the format string
+C:\Users\bombr\Desktop\SP_LABS\SP_LAB_5\SP_LAB_5\CLIENT\CLIENT.cpp(115,13): message : consider using '%ws' in the format string
+C:\Users\bombr\Desktop\SP_LABS\SP_LAB_5\SP_LAB_5\CLIENT\CLIENT.cpp(14,17): warning C4101: 'cbToWrite': unreferenced local variable
+  CLIENT.vcxproj -> C:\Users\bombr\Desktop\SP_LABS\SP_LAB_5\SP_LAB_5\x64\Debug\CLIENT.exe
