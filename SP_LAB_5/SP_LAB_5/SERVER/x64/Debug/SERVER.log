@@ -1,1 +1,7 @@
-﻿  SERVER.vcxproj -> C:\Users\bombr\Desktop\SP_LABS\SP_LAB_5\SP_LAB_5\x64\Debug\SERVER.exe
+﻿  SERVER.cpp
+C:\Users\bombr\Desktop\SP_LABS\SP_LAB_5\SP_LAB_5\SERVER\SERVER.cpp(227,12): warning C4477: 'printf' : format string '%s' requires an argument of type 'char *', but variadic argument 1 has type 'LPTSTR'
+C:\Users\bombr\Desktop\SP_LABS\SP_LAB_5\SP_LAB_5\SERVER\SERVER.cpp(227,12): message : consider using '%ls' in the format string
+C:\Users\bombr\Desktop\SP_LABS\SP_LAB_5\SP_LAB_5\SERVER\SERVER.cpp(227,12): message : consider using '%lls' in the format string
+C:\Users\bombr\Desktop\SP_LABS\SP_LAB_5\SP_LAB_5\SERVER\SERVER.cpp(227,12): message : consider using '%Ls' in the format string
+C:\Users\bombr\Desktop\SP_LABS\SP_LAB_5\SP_LAB_5\SERVER\SERVER.cpp(227,12): message : consider using '%ws' in the format string
+  SERVER.vcxproj -> C:\Users\bombr\Desktop\SP_LABS\SP_LAB_5\SP_LAB_5\x64\Debug\SERVER.exe

@@ -1,33 +1,28 @@
 ﻿#include <process.h>
 #include <stdio.h>
-#include<windows.h>
-#include<iostream>
-#include<time.h>
+#include <windows.h>
+#include <iostream>
+#include <time.h>
 
 using namespace std;
 
-#define N 5             //Число философов
-#define LEFT (i-1)%N    //Левый сосед философа с номером i
-#define RIGHT (i+1)%N   //Правый сосед философа сномером i
-#define LF i   //Правый сосед философа сномером i
-#define RF (i-1)%N   //Правый сосед философа сномером i
-#define THINKING 0      //Философ размышляет
-#define HUNGRY 1        //Философ получается получить вилки
-#define EATING 2        //Философ ест
+#define N 5					//Число философов
 
-int state[N];           //Состояния каждого философа
+#define LEFT (i-1)%N		//Левый сосед философа с номером i - 1
+#define RIGHT (i+1)%N		//Правый сосед философа с номером i + 1
 
+#define THINKING 0			//Философ размышляет
+#define HUNGRY 1			//Философ получается получить вилки
+#define EATING 2			//Философ ест
 
-struct Philosopher      //Описание философа: номер, алгоритм
+int philosopher_state[N];   //Состояния каждого философа
+
+struct Philosopher          // Описание философа
 {
-    int number;
-    int algorithm;
+	int number;
 };
 
-int isFork[N]; //Number philosopher
-
-
-CRITICAL_SECTION cs;        //Для критических секций: синхрон. процессов    
+CRITICAL_SECTION cs;        //Для критических секций: синхрон. процессов(философов)    
 CRITICAL_SECTION cs_forks;  //и синхр. вилок
 
 HANDLE philMutex[N];    //Каждому философу по мьютексу
@@ -35,192 +30,88 @@ HANDLE forkMutex[N];    //и каждой вилке
 
 void think(int i)       //Моделирует размышления философа
 {
-    EnterCriticalSection(&cs);    //Вход в критическую секцию
-    cout << "Philosopher number " << i << " thinking" << endl;
-    LeaveCriticalSection(&cs);    //Выход из критической секции
+	EnterCriticalSection(&cs);    //Вход в критическую секцию
+	cout << "Philosopher		" << i << "      thinking" << endl;
+	LeaveCriticalSection(&cs);    //Выход из критической секции
 }
 
 void eat(int i)         //Моделирует обед философа
 {
-    EnterCriticalSection(&cs);    //Вход в критическую секцию
-    cout << "Philosopher number " << i << " eating" << endl;
-    LeaveCriticalSection(&cs);    //Выход из критической секции
+	EnterCriticalSection(&cs);    //Вход в критическую секцию
+	cout << "Philosopher		" << i << "      eating" << endl;
+	LeaveCriticalSection(&cs);    //Выход из критической секции
 }
 
-void test(int i)    //Проверка возможности начать философом обед
+void test_for_dinner(int i)    //Проверка возможности начать философом обед
 {
-    if (state[i] == HUNGRY && state[LEFT] != EATING && state[RIGHT] != EATING)
-    {
-        state[i] = EATING;
-        ReleaseMutex(philMutex[i]);
-
-    }
+	if (philosopher_state[i] == HUNGRY && philosopher_state[LEFT] != EATING && philosopher_state[RIGHT] != EATING)
+	{
+		philosopher_state[i] = EATING;
+		ReleaseMutex(philMutex[i]);
+	}
 }
 
-void take_forks(int i)  //Взятие вилок
+void take_forks(int i)
 {
-    EnterCriticalSection(&cs_forks);              //Вход в критическую секцию
-    state[i] = HUNGRY;                                //Фиксация наличия голодного философа
-    test(i);                                        //Попытка получить две вилки
-    LeaveCriticalSection(&cs_forks);              //Выход из критической секции
-    WaitForSingleObject(philMutex[i], INFINITE);  //Блокировка если вилок не досталось
-
-
+	EnterCriticalSection(&cs_forks);              //Вход в критическую секцию
+	philosopher_state[i] = HUNGRY;                //Фиксация наличия голодного философа
+	test_for_dinner(i);                           //Попытка получить две вилки
+	LeaveCriticalSection(&cs_forks);              //Выход из критической секции
+	//cout << "Philosopher number " << i << " taked forks" << endl;
+	WaitForSingleObject(philMutex[i], INFINITE);  //Блокировка если вилок не досталось
 }
 
-void put_forks(int i)   //Философ кладет вилки обратно
+void put_forks(int i)
 {
-    EnterCriticalSection(&cs_forks);  //Вход в критическую секцию   
-    state[i] = THINKING;                  //Философ перестал есть
-    test(LEFT);                         //Проверить может ли есть сосед слева
-    test(RIGHT);                        //Проверить может ли есть сосед справа
-    LeaveCriticalSection(&cs_forks);  //Выход из критической секции
-}
-
-void take_left_fork(int i)  //Попытка взять левую вилку
-{
-    EnterCriticalSection(&cs);
-    WaitForSingleObject(forkMutex[LEFT], INFINITE);   //Если вилка свободна  
-    isFork[LF] = i;                                  //Берем ее
-    LeaveCriticalSection(&cs);
-
-}
-
-void put_left_fork(int i)   //Кладем левую вилку
-{
-    WaitForSingleObject(forkMutex[LEFT], INFINITE);
-    isFork[LF] = -1;           //Кладем вилку
-    ReleaseMutex(forkMutex[LEFT]);
-
-}
-
-void take_right_fork(int i) //Попытка взять правую вилку
-{
-    EnterCriticalSection(&cs);
-    WaitForSingleObject(forkMutex[RIGHT], INFINITE);  //Если вилка свободна  
-    isFork[RF] = i;                                   //Берем ее
-    LeaveCriticalSection(&cs);
-
-}
-
-void put_right_fork(int i)  //Кладем правую вилку
-{
-    WaitForSingleObject(forkMutex[RIGHT], INFINITE);
-    isFork[RF] = -1;          //Кладем вилку
-    ReleaseMutex(forkMutex[RIGHT]);
-
-}
-int test_fork(int i)    //Проверяем наличи у философа обеих вилок
-{
-    if (isFork[LF] == i && isFork[RF] == i) //Если обе
-    {
-        ReleaseMutex(forkMutex[LEFT]);    //Разрешаем положить вилки
-        ReleaseMutex(forkMutex[RIGHT]);   //
-        return 1;                                   //Едим
-    }
-    else
-        return 0;
+	EnterCriticalSection(&cs_forks);  //Вход в критическую секцию   
+	philosopher_state[i] = THINKING;  //Философ перестал есть
+	test_for_dinner(LEFT);            //Проверить может ли есть сосед слева
+	test_for_dinner(RIGHT);           //Проверить может ли есть сосед справа
+	LeaveCriticalSection(&cs_forks);  //Выход из критической секции
+	//cout << "Philosopher number " << i << " putted down forks" << endl;
 }
 
 DWORD WINAPI philosopher(void* lParam)  //Собственно модель философа
 {
-    Philosopher phil = *((Philosopher*)lParam);  //Получаем модель философа
-    int i = phil.number;
+	Philosopher phil = *((Philosopher*)lParam);  //Получаем модель философа
+	int i = phil.number;
 
-    while (1)    //Моделируем обед
-    {   //Берем вилки
-        if (phil.algorithm == 0)   //Берем первой левую вилку
-        {
-            think(phil.number); //Думаем
-            take_left_fork(phil.number);  Sleep(1);  //Берем левую
-            take_right_fork(phil.number); Sleep(1);   //и правую вилки
-            if (test_fork(phil.number) == 1)           //Если обе 
-                eat(phil.number);                   //то едим
-        }
-        else
-            if (phil.algorithm == 1)   //Берем первую вилку случайно
-            {
-                int n = rand() % 2;
-                think(phil.number); //Думаем
-                if (n == 1)
-                {
+	while (1)    //Моделируем обед
+	{
+		think(phil.number);     // Думаем
+		take_forks(phil.number);// Берем вилки 
+		eat(phil.number);       // Едим
+		put_forks(phil.number); // Кладём вилки
 
-                    take_left_fork(phil.number);        //Берем вилки случайно
-                    take_right_fork(phil.number);
-                }
-                else
-                {
-                    take_right_fork(phil.number);
-                    take_left_fork(phil.number);
-                }
-                if (test_fork(phil.number) == 1)
-                    eat(phil.number);
-            }
-            else
-                if (phil.algorithm == 2)   //Берем обе вилки
-                {
-                    think(phil.number);     //Думаем
-                    take_forks(phil.number);//Берем вилки 
-                    eat(phil.number);       //Едим
-                }
-        //кладем вилки
-        if (phil.algorithm == 0 && isFork[LF] == i && isFork[RF] == i)
-        {
-            put_left_fork(phil.number);     //Кладем левую
-            put_right_fork(phil.number);    //и правую по первому алгоритму
-        }
-        else    //Кладем вилки по второму алгоритму    
-            if (phil.algorithm == 1 && isFork[LF] == i && isFork[RF] == i)
-            {
-                int n = rand() % 2;
-                if (n == 1)
-                {
-                    put_left_fork(phil.number);
-                    put_right_fork(phil.number);
-                }
-                else    //Случайным образом
-                {
-                    put_right_fork(phil.number);
-                    put_left_fork(phil.number);
-                }
-            }
-            else
-                if (phil.algorithm == 2)   //Кладем вилки по третьему алгоритму
-                    put_forks(phil.number);
-
-        Sleep(10);  //Даем время на переключение контекста
-    }
+		Sleep(10);  //Даем время на переключение контекста
+	}
 }
+
 int main()
 {
-    srand(time(NULL));  //Что бы числа были действительно случайными
-    Philosopher phil[N];
-    for (int i = 0; i < N; i++)  //Первоначально у философов нет вилок
-    {
-        isFork[i] = -1;
-    }
-    cout << "Please input number of algorithm(0-left, 1-random, 2-both: " << endl;
-    for (int i = 0; i < N; i++)  //Задаем алгоритмы взятия вилок
-    {
-        phil[i].number = i;
-        cout << "Philosopher number " << phil[i].number << ": ";
-        cin >> phil[i].algorithm;
-    }
-    for (int i = 0; i < N; i++)  //Создаем мьютексы
-    {
-        philMutex[i] = CreateMutex(NULL, FALSE, NULL);
-        forkMutex[i] = CreateMutex(NULL, FALSE, NULL);
-    }
-    InitializeCriticalSection(&cs);       //Инициализируем
-    InitializeCriticalSection(&cs_forks); //критические секции
+	Philosopher phil[N];
+	for (int i = 0; i < N; i++)  // Нумеруем философов
+	{
+		phil[i].number = i;
+	}
 
-    DWORD id[N];        //Идентификаторы потоков
-    HANDLE hThread[N];  //Потоки
-    for (int i = 0; i < N; i++)//Создаем потоки
-    {
-        hThread[i] = CreateThread(NULL, NULL, &philosopher, &phil[i], NULL, &id[i]);
+	for (int i = 0; i < N; i++)  //Создаем мьютексы
+	{
+		philMutex[i] = CreateMutex(NULL, FALSE, NULL);
+		forkMutex[i] = CreateMutex(NULL, FALSE, NULL);
+	}
 
-    }
-    Sleep(INFINITE);    //Чтобы потоки успели выполнится с корректными значениями 
-    while (1);
+	InitializeCriticalSection(&cs);       //Инициализируем
+	InitializeCriticalSection(&cs_forks); //критические секции
+
+	DWORD id[N];        //Идентификаторы потоков
+	HANDLE hThread[N];  //Потоки
+
+	for (int i = 0; i < N; i++)//Создаем потоки
+	{
+		hThread[i] = CreateThread(NULL, NULL, &philosopher, &phil[i], NULL, &id[i]);
+	}
+
+	Sleep(INFINITE);    //Чтобы потоки успели выполнится с корректными значениями 
+	while (1);
 }
