@@ -1,0 +1,4 @@
+﻿  CLIENT.cpp
+C:\Users\bombr\Desktop\SP_LABS\SP_LAB_7\SP_LAB_7\CLIENT\CLIENT.cpp(86,1): warning C4326: return type of 'main' should be 'int' instead of 'void'
+C:\Users\bombr\Desktop\SP_LABS\SP_LAB_7\SP_LAB_7\CLIENT\CLIENT.cpp(138,74): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+  CLIENT.vcxproj -> C:\Users\bombr\Desktop\SP_LABS\SP_LAB_7\SP_LAB_7\x64\Debug\CLIENT.exe
