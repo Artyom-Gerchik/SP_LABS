@@ -1,7 +1,7 @@
 ﻿  SERVER.cpp
-C:\Users\bombr\Desktop\SP_LABS\SP_LAB_7\SP_LAB_7\SERVER\SERVER.cpp(113,1): warning C4326: return type of 'main' should be 'int' instead of 'void'
-C:\Users\bombr\Desktop\SP_LABS\SP_LAB_7\SP_LAB_7\SERVER\SERVER.cpp(195,62): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\bombr\Desktop\SP_LABS\SP_LAB_7\SP_LAB_7\SERVER\SERVER.cpp(229,24): warning C4018: '<': signed/unsigned mismatch
-C:\Users\bombr\Desktop\SP_LABS\SP_LAB_7\SP_LAB_7\SERVER\SERVER.cpp(238,58): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
-C:\Users\bombr\Desktop\SP_LABS\SP_LAB_7\SP_LAB_7\SERVER\SERVER.cpp(260,44): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\bombr\Desktop\SP_LABS\SP_LAB_7\SP_LAB_7\SERVER\SERVER.cpp(11,1): warning C4326: return type of 'main' should be 'int' instead of 'void'
+C:\Users\bombr\Desktop\SP_LABS\SP_LAB_7\SP_LAB_7\SERVER\SERVER.cpp(93,62): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\bombr\Desktop\SP_LABS\SP_LAB_7\SP_LAB_7\SERVER\SERVER.cpp(127,24): warning C4018: '<': signed/unsigned mismatch
+C:\Users\bombr\Desktop\SP_LABS\SP_LAB_7\SP_LAB_7\SERVER\SERVER.cpp(136,58): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\bombr\Desktop\SP_LABS\SP_LAB_7\SP_LAB_7\SERVER\SERVER.cpp(158,44): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
   SERVER.vcxproj -> C:\Users\bombr\Desktop\SP_LABS\SP_LAB_7\SP_LAB_7\x64\Debug\SERVER.exe
